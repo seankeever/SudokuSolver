@@ -15,9 +15,6 @@ namespace SudokuMaster
             string puzzleName = "puzzle5.txt";
             
             SudokuGrid grid = InitializePuzzle(puzzlePath,puzzleName);
-            //NarrowDownCanidates(ref grid);
-            //PopulateSingledOutCanidates(ref grid);
-            //PrintGrid(grid, '_');
 
             while (grid.IsSolved == false)
             {
@@ -38,14 +35,40 @@ namespace SudokuMaster
 
         private static bool CheckIfSolved(ref SudokuGrid grid)
         {
-            foreach(SudokuSquare square in grid)
+            for(int i=1;i<=9; i++)
             {
-                if (square.IsSet == false)
+                if (!ValidateSet(grid.GetRowAt(i)))
+                    return false;
+
+                if (!ValidateSet(grid.GetColumnAt(i)))
+                    return false;
+
+                if (!ValidateSet(grid.GetRegionAt(i)))
                     return false;
             }
+
             grid.IsSolved = true;
             return true;
         }
+
+        private static bool ValidateSet(List<SudokuSquare> focussSet)
+        {
+            List<int> values = new List<int>();
+
+            foreach(SudokuSquare square in focussSet)
+                if (square.Value != 0)
+                    values.Add(square.Value);
+
+            if (values.Count != 9)
+                return false;
+
+            for (int i = 1; i <= 9; i++)
+                if (!values.Contains(i))
+                    return false;
+
+            return true;
+        }
+
 
         private static bool PopulateSingledOutCanidates(ref SudokuGrid grid)
         {
