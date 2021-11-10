@@ -18,9 +18,39 @@ namespace SudokuMaster
 
             
             SudokuGrid grid = InitializePuzzle(puzzlePath,puzzleName);
+            NarrowDownCanidates(ref grid);
 
             PrintGrid(grid, '_');
 
+        }
+
+        private static void NarrowDownCanidates(ref SudokuGrid grid)
+        {
+            for(int row = 1; row<=9; row++)
+            {
+                List<SudokuSquare> currentRow = grid.GetRowAt(row);
+                List<int> permanentValues = GetPermanentValues(currentRow);
+                ScratchOutTakenValues(ref grid, currentRow, permanentValues);
+            }
+
+        }
+
+        private static void ScratchOutTakenValues(ref SudokuGrid grid, List<SudokuSquare> currentRow, List<int> permanentValues)
+        {
+            foreach(SudokuSquare square in currentRow)
+            {
+                foreach (int permanentValue in permanentValues)
+                    grid.GetSquareAt(square.Row, square.Column).CanidateList.GetCanidateByValue(permanentValue).IsCrossedOff = true;
+            }
+        }
+
+        private static List<int> GetPermanentValues(List<SudokuSquare> currentRow)
+        {
+            List<int> permanentValues = new List<int>();
+            foreach (SudokuSquare square in currentRow)
+                if (square.Value != 0)
+                    permanentValues.Add(square.Value);
+            return permanentValues;
         }
 
         private static void PrintGrid(SudokuGrid grid, char emptyChar = 'X' )
@@ -57,7 +87,6 @@ namespace SudokuMaster
                         int permanentValue = int.Parse(currentInputValue.ToString());
                         SudokuSquare currentSquare = grid.GetSquareAt(row, column);
                         currentSquare.Value = permanentValue;
-                        //.Value = permanentValue;
                     }
                 }
             }

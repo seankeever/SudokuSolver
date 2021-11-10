@@ -473,13 +473,37 @@ namespace SudokuMaster.Models
             return square;
         }
 
+        public List<SudokuSquare> GetRowAt(int rowNumber)
+        {
+            List<SudokuSquare> row = new List<SudokuSquare>();
 
+            foreach (SudokuSquare square in Squares)
+                if (square.Row == rowNumber)
+                    row.Add(square);
 
+            return row;
+        }
 
-        //public SudokuSquare GetSquareAt(int row, int column)
-        //{
-        //    SudokuSquare square = (SudokuSquare)Squares.Where(s => s.Row == row && s.Column == column);
-        //    return square;
-        //}
+        public List<SudokuSquare> GetColumnAt(int columnNumber)
+        {
+            List<SudokuSquare> column = new List<SudokuSquare>();
+
+            foreach (SudokuSquare square in Squares)
+                if (square.Column == columnNumber)
+                    column.Add(square);
+
+            return column;
+        }
+
+        public List<SudokuSquare> GetRegionAt(int regionNumber)
+        {
+            List<SudokuSquare> region = new List<SudokuSquare>();
+
+            foreach (SudokuSquare square in Squares)
+                if (square.Region == regionNumber)
+                    region.Add(square);
+
+            return region;
+        }
     }
 }
