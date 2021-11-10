@@ -18,10 +18,53 @@ namespace SudokuMaster
 
             
             SudokuGrid grid = InitializePuzzle(puzzlePath,puzzleName);
-            NarrowDownCanidates(ref grid);
 
+            //while(grid.IsSolved == false)
+            //{
+            //    NarrowDownCanidates(ref grid);
+
+            //    bool wasNarrowedDown = PopulateSingledOutCanidates(ref grid);
+            //}
+
+            NarrowDownCanidates(ref grid);
+            PopulateSingledOutCanidates(ref grid);
+            //PrintSquareByID(grid, 29);
             PrintGrid(grid, '_');
 
+        }
+
+
+
+        private static bool PopulateSingledOutCanidates(ref SudokuGrid grid)
+        {
+            bool wasNarrowedDown = false;
+            foreach(SudokuSquare square in grid)
+            {
+                if(square.IsSet == false)
+                {
+                    List<int> canidates = GetValidCanidates(square);
+                    if (canidates.Count == 1)
+                    {
+                        grid.GetSquareAt(square.Row, square.Column).Value = canidates[0];
+                        grid.GetSquareAt(square.Row, square.Column).IsSet = true;
+                        wasNarrowedDown = true;
+                    }
+                        
+                }
+            }
+            return wasNarrowedDown;
+        }
+
+        private static List<int> GetValidCanidates(SudokuSquare square)
+        {
+            List<int> validCanidates = new List<int>();
+            CanidateList list = square.CanidateList;
+
+            foreach(Canidate c in list)
+                if(!c.IsCrossedOff)
+                    validCanidates.Add(c.Value);
+
+            return validCanidates;
         }
 
         private static void NarrowDownCanidates(ref SudokuGrid grid)
@@ -33,39 +76,40 @@ namespace SudokuMaster
                 ScratchOutTakenValues(ref grid, currentRow, permanentValues);
             }
 
+            for (int column = 1; column <= 9; column++)
+            {
+                List<SudokuSquare> currentColumn = grid.GetColumnAt(column);
+                List<int> permanentValues = GetPermanentValues(currentColumn);
+                ScratchOutTakenValues(ref grid, currentColumn, permanentValues);
+            }
+
+            for (int region = 1; region <= 9; region++)
+            {
+                List<SudokuSquare> currentRegion = grid.GetRegionAt(region);
+                List<int> permanentValues = GetPermanentValues(currentRegion);
+                ScratchOutTakenValues(ref grid, currentRegion, permanentValues);
+            }
         }
 
-        private static void ScratchOutTakenValues(ref SudokuGrid grid, List<SudokuSquare> currentRow, List<int> permanentValues)
+        private static void ScratchOutTakenValues(ref SudokuGrid grid, List<SudokuSquare> focussSet, List<int> permanentValues)
         {
-            foreach(SudokuSquare square in currentRow)
+            foreach(SudokuSquare square in focussSet)
             {
                 foreach (int permanentValue in permanentValues)
                     grid.GetSquareAt(square.Row, square.Column).CanidateList.GetCanidateByValue(permanentValue).IsCrossedOff = true;
             }
         }
 
-        private static List<int> GetPermanentValues(List<SudokuSquare> currentRow)
+        private static List<int> GetPermanentValues(List<SudokuSquare> focussSet)
         {
             List<int> permanentValues = new List<int>();
-            foreach (SudokuSquare square in currentRow)
+            foreach (SudokuSquare square in focussSet)
                 if (square.Value != 0)
                     permanentValues.Add(square.Value);
             return permanentValues;
         }
 
-        private static void PrintGrid(SudokuGrid grid, char emptyChar = 'X' )
-        {
-            for (int row = 1; row <= 9; row++)
-            {
-                string currentLine = string.Empty;
-                for (int column = 1; column <= 9; column++)
-                {
-                    currentLine += grid.GetSquareAt(row, column).Value.ToString();
-                }
-                currentLine = currentLine.Replace('0', emptyChar);
-                Console.WriteLine(currentLine);
-            }
-        }
+
 
         private static SudokuGrid InitializePuzzle(string puzzlePath, string puzzleName)
         {
@@ -87,11 +131,58 @@ namespace SudokuMaster
                         int permanentValue = int.Parse(currentInputValue.ToString());
                         SudokuSquare currentSquare = grid.GetSquareAt(row, column);
                         currentSquare.Value = permanentValue;
+                        currentSquare.IsSet = true;
                     }
                 }
             }
 
             return grid;
+        }
+
+
+
+
+
+
+
+        //---------------------------------------------------------------------------------------
+        ////--------------------------------- printing methods ----------------------------------
+        //---------------------------------------------------------------------------------------
+        private static void PrintGrid(SudokuGrid grid, char emptyChar = 'X')
+        {
+            for (int row = 1; row <= 9; row++)
+            {
+                string currentLine = string.Empty;
+                for (int column = 1; column <= 9; column++)
+                {
+                    currentLine += grid.GetSquareAt(row, column).Value.ToString();
+                }
+                currentLine = currentLine.Replace('0', emptyChar);
+                Console.WriteLine(currentLine);
+            }
+        }
+        private static void PrintSquareByID(SudokuGrid grid, int squareID)
+        {
+            foreach (SudokuSquare square in grid)
+            {
+                if (square.SquareID == squareID)
+                {
+                    PrintSquare(square);
+                }
+            }
+        }
+
+        private static void PrintSquare(SudokuSquare square)
+        {
+            Console.WriteLine("ID: " + square.SquareID.ToString());
+            Console.WriteLine("Row: " + square.Row.ToString());
+            Console.WriteLine("Column: " + square.Column.ToString());
+            Console.WriteLine("Is Set: " + square.IsSet.ToString());
+            Console.WriteLine("Canidate List: " + "\n");
+
+            foreach(Canidate c in square.CanidateList)
+                if (!c.IsCrossedOff)
+                    Console.WriteLine(c.Value.ToString());
         }
     }
 }

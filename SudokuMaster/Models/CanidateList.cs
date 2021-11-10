@@ -9,7 +9,7 @@ namespace SudokuMaster.Models
 {
     //public class CanidateList : IEnumerable
     //public class CanidateList : IEnumerable<Canidate>
-    public class CanidateList
+    public class CanidateList : IEnumerable
     {
         public CanidateList()
         {
@@ -24,16 +24,15 @@ namespace SudokuMaster.Models
         {
             return List.Single(c => c.Value == Value);
         }
-
-        //public IEnumerator GetEnumerator()
-        //{
-        //    foreach (Canidate canidate in List)
-        //    {
-        //        if (canidate == null)
-        //            break;
-        //        yield return canidate;
-        //    }
-        //}
+        public IEnumerator GetEnumerator()
+        {
+            foreach (Canidate canidate in List)
+            {
+                if (canidate == null)
+                    break;
+                yield return canidate;
+            }
+        }
 
         //IEnumerator<Canidate> IEnumerable<Canidate>.GetEnumerator()
         //{

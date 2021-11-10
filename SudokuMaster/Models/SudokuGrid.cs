@@ -12,6 +12,7 @@ namespace SudokuMaster.Models
         public SudokuGrid()
         {
             InitializeSquares();
+            this.IsSolved = false;
         }
 
         private void InitializeSquares()
@@ -467,6 +468,13 @@ namespace SudokuMaster.Models
         }
 
         public List<SudokuSquare> Squares = new List<SudokuSquare>();
+
+        public bool IsSolved { get; set; }
+
+
+
+
+
         public SudokuSquare GetSquareAt(int row, int column)
         {
             SudokuSquare square = Squares.FirstOrDefault(s => s.Row == row && s.Column==column);
