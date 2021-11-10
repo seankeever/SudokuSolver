@@ -12,28 +12,40 @@ namespace SudokuMaster
         static void Main(string[] args)
         {
             string puzzlePath = @"C:\Users\sean\source\repos\SudokuSolver\Puzzles\";
-            string puzzleName = "puzzle1.txt";
-
-
-
+            string puzzleName = "puzzle5.txt";
             
             SudokuGrid grid = InitializePuzzle(puzzlePath,puzzleName);
+            //NarrowDownCanidates(ref grid);
+            //PopulateSingledOutCanidates(ref grid);
+            //PrintGrid(grid, '_');
 
-            //while(grid.IsSolved == false)
-            //{
-            //    NarrowDownCanidates(ref grid);
+            while (grid.IsSolved == false)
+            {
+                NarrowDownCanidates(ref grid);
 
-            //    bool wasNarrowedDown = PopulateSingledOutCanidates(ref grid);
-            //}
+                bool wasNarrowedDown = true;
+                while (wasNarrowedDown)
+                {
+                    wasNarrowedDown = PopulateSingledOutCanidates(ref grid);
+                    CheckIfSolved(ref grid);
+                }
 
-            NarrowDownCanidates(ref grid);
-            PopulateSingledOutCanidates(ref grid);
-            //PrintSquareByID(grid, 29);
-            PrintGrid(grid, '_');
+            }
+            PrintGrid(grid);
+
 
         }
 
-
+        private static bool CheckIfSolved(ref SudokuGrid grid)
+        {
+            foreach(SudokuSquare square in grid)
+            {
+                if (square.IsSet == false)
+                    return false;
+            }
+            grid.IsSolved = true;
+            return true;
+        }
 
         private static bool PopulateSingledOutCanidates(ref SudokuGrid grid)
         {
