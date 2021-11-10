@@ -467,5 +467,19 @@ namespace SudokuMaster.Models
         }
 
         public List<SudokuSquare> Squares = new List<SudokuSquare>();
+        public SudokuSquare GetSquareAt(int row, int column)
+        {
+            SudokuSquare square = Squares.FirstOrDefault(s => s.Row == row && s.Column==column);
+            return square;
+        }
+
+
+
+
+        //public SudokuSquare GetSquareAt(int row, int column)
+        //{
+        //    SudokuSquare square = (SudokuSquare)Squares.Where(s => s.Row == row && s.Column == column);
+        //    return square;
+        //}
     }
 }
