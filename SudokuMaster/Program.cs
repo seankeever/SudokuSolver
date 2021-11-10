@@ -1,5 +1,9 @@
-﻿using System;
+﻿using SudokuMaster.Models;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+
 
 namespace SudokuMaster
 {
@@ -10,10 +14,36 @@ namespace SudokuMaster
             string puzzlePath = @"C:\Users\sean\source\repos\SudokuSolver\Puzzles\";
             string puzzleName = "puzzle1.txt";
 
-            string fullPath = puzzlePath + puzzleName;
-            string puzzleContent = File.ReadAllText(fullPath);
+            StreamReader st = new StreamReader(puzzlePath + puzzleName);
 
-            Console.WriteLine(puzzleContent);
+            List<string> rows = new List<string>();
+            while (!st.EndOfStream)
+            {
+                rows.Add(st.ReadLine());
+            }
+
+
+            SudokuGrid Grid = new SudokuGrid();
+
+            foreach(SudokuSquare square in Grid)
+            {
+                if (square.Region == 9)
+                    Console.WriteLine(square.SquareID);
+            }
+
         }
     }
 }
+//static void Main(string[] args)
+//{
+//    string puzzlePath = @"C:\Users\sean\source\repos\SudokuSolver\Puzzles\";
+//    string puzzleName = "puzzle1.txt";
+
+//    StreamReader st = new StreamReader(puzzlePath + puzzleName);
+
+//    List<string> rows = new List<string>();
+//    while (!st.EndOfStream)
+//    {
+//        rows.Add(st.ReadLine());
+//    }
+//}
