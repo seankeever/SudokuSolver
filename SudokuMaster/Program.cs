@@ -23,7 +23,7 @@ namespace SudokuMaster
                 while (LogicService.PopulateSingledOutCanidates(ref grid))
                     ValidationService.CheckIfSolved(ref grid);
             }
-            PrintingService.PrintGrid(grid);
+            ImportExportService.ExportCompletedPuzzleSolution(grid, puzzlePath+puzzleName);
         }
 
     }
