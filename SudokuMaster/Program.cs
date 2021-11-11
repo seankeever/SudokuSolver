@@ -20,24 +20,11 @@ namespace SudokuMaster
             while (grid.IsSolved == false)
             {
                 LogicService.NarrowDownCanidates(ref grid);
-
-                bool wasNarrowedDown = true;
-                while (wasNarrowedDown)
-                {
-                    wasNarrowedDown = LogicService.PopulateSingledOutCanidates(ref grid);
+                while (LogicService.PopulateSingledOutCanidates(ref grid))
                     ValidationService.CheckIfSolved(ref grid);
-                }
-
             }
             PrintingService.PrintGrid(grid);
-
-
         }
-
-
-
-
-
 
     }
 }
