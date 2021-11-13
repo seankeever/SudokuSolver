@@ -86,9 +86,9 @@ namespace SudokuMaster.Services
 
 
 
-        public static SudokuGrid InitializePuzzle(string puzzlePath, string puzzleName)
+        public static SudokuGrid InitializePuzzle(string puzzlePath)
         {
-            StreamReader st = new StreamReader(puzzlePath + puzzleName);
+            StreamReader st = new StreamReader(puzzlePath);
             List<string> rows = new List<string>();
             rows.Add("Blank Row to fill up 0'th row index to improve understandability");
             while (!st.EndOfStream)
@@ -112,6 +112,32 @@ namespace SudokuMaster.Services
             }
 
             return grid;
+        }
+
+        public static bool FastSolve(SudokuGrid grid) {
+            // Look for square with fewest possible values
+            int bestIdx = -1, bestCount = 10;
+            for (int i=0; i<81; i++)
+                if (!grid.Squares[i].IsSet) {
+                    List<int> pv = grid.PossibleValues(i);
+                    if (pv.Count==0) return false;
+                    if (pv.Count<bestCount) {
+                        bestIdx=i;
+                        bestCount=pv.Count;
+                    }
+                }
+
+            // Try each possible value for that square
+            if (bestIdx>=0) {
+                foreach (int i in grid.PossibleValues(bestIdx)) {
+                    grid.Squares[bestIdx].IsSet = true;
+                    grid.Squares[bestIdx].Value = i;
+                    if (FastSolve(grid)) return true;
+                }
+                grid.Squares[bestIdx].IsSet = false; // backtrack
+                return false; // no solution, tell outer call(s) to try different values
+            }
+            return true; // no unset squares, so we solved it
         }
     }
 }
